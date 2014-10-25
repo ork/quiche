@@ -9,63 +9,73 @@ ApplicationWindow {
     height: 700
     title: qsTr("Quiche")
 
-    Rectangle {
-        width: parent.width
-        height: parent.height
-        Component.onCompleted: startup();
-
-        function startup() {
-            Twitch.get_featured_streams(function(resp) {
-                for (var i = 0; i < resp.featured.length; ++i) {
-                    streamsModel.append({
-                        preview: resp.featured[i].stream.preview,
-                        title: resp.featured[i].stream.channel.status
-                    });
-                }
-            });
-        }
+    StackView {
+        id:stack
+        initialItem: featuredStreams
 
         Component {
-            id: streamsDelegate
+            id:featuredStreams
 
-            Item {
-                width: 320
-                height: 200
+            Rectangle {
+                width: parent.width
+                height: parent.height
+                Component.onCompleted: startup();
 
-                Column {
-                    width: parent.width
-                    height: parent.height
-                    Row {
-                        width: parent.width
-                        Image {
-                            source: preview
+                function startup() {
+                    Twitch.get_featured_streams(function(resp) {
+                        for (var i = 0; i < resp.featured.length; ++i) {
+                            var item = {
+                                preview: resp.featured[i].stream.preview,
+                                title: resp.featured[i].stream.channel.status
+                            };
+                            streamsModel.append(item);
                         }
-                    }
-                    Row {
-                        width: parent.width
-                        Label {
+                    });
+                }
+
+                Component {
+                    id: streamsDelegate
+
+                    Item {
+                        width: 320
+                        height: 200
+
+                        Column {
                             width: parent.width
-                            text: title
-                            elide: "ElideRight"
+                            height: parent.height
+                            Row {
+                                width: parent.width
+                                Image {
+                                    source: preview
+                                }
+                            }
+                            Row {
+                                width: parent.width
+                                Label {
+                                    width: parent.width
+                                    text: title
+                                    elide: "ElideRight"
+                                }
+                            }
                         }
+
                     }
                 }
 
+                GridView {
+                    id: streams
+                    model: streamsModel
+                    delegate: streamsDelegate
+                    anchors.fill: parent
+                    anchors.margins: 20
+                    cellHeight: 220
+                    cellWidth: 340
+                }
+
+                ListModel {
+                    id: streamsModel
+                }
             }
-        }
-
-        GridView {
-            id: streams
-            model: streamsModel
-            delegate: streamsDelegate
-            anchors.fill: parent
-            anchors.margins: 20
-            cellHeight: 220
-            cellWidth: 340
-        }
-
-        ListModel {
-            id: streamsModel
         }
     }
 }
