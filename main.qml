@@ -5,8 +5,8 @@ import "twitch.js" as Twitch
 
 ApplicationWindow {
     visible: true
-    width: 640
-    height: 480
+    width: 1060
+    height: 700
     title: qsTr("Quiche")
 
     Rectangle {
