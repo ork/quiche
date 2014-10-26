@@ -19,6 +19,7 @@ ApplicationWindow {
             Rectangle {
                 width: parent.width
                 height: parent.height
+
                 Component.onCompleted: startup();
 
                 function startup() {
@@ -75,10 +76,12 @@ ApplicationWindow {
                     cellHeight: 220
                     cellWidth: 340
                     focus: true
+                    clip: true
                 }
 
                 ListModel {
                     id: streamsModel
+
                 }
             }
         }
