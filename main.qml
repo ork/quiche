@@ -37,28 +37,32 @@ ApplicationWindow {
                     id: streamsDelegate
 
                     Item {
-                        width: 320
+                        id: streamItem
                         height: 200
+                        width: 320
 
                         Column {
-                            width: parent.width
                             height: parent.height
-                            Row {
+                            width: parent.width
+
+                            // Preview image
+                            Image {
+                                source: preview
                                 width: parent.width
-                                Image {
-                                    source: preview
-                                }
                             }
-                            Row {
+
+                            // Stream title
+                            Label {
                                 width: parent.width
-                                Label {
-                                    width: parent.width
-                                    text: title
-                                    elide: "ElideRight"
-                                }
+                                text: title
+                                elide: "ElideRight"
+                                color: streamItem.activeFocus ? "red" : "black"
                             }
                         }
 
+                        Keys.onReturnPressed: {
+                            print("launching stream")
+                        }
                     }
                 }
 
@@ -70,6 +74,7 @@ ApplicationWindow {
                     anchors.margins: 20
                     cellHeight: 220
                     cellWidth: 340
+                    focus: true
                 }
 
                 ListModel {
