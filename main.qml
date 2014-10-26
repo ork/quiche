@@ -27,7 +27,8 @@ ApplicationWindow {
                         for (var i = 0; i < resp.featured.length; ++i) {
                             var item = {
                                 preview: resp.featured[i].stream.preview,
-                                title: resp.featured[i].stream.channel.status
+                                title: resp.featured[i].stream.channel.status,
+                                displayName: resp.featured[i].stream.channel.display_name
                             };
                             streamsModel.append(item);
                         }
@@ -62,7 +63,7 @@ ApplicationWindow {
                         }
 
                         Keys.onReturnPressed: {
-                            print("launching stream")
+                            print("Streamed by " + displayName)
                         }
                     }
                 }
