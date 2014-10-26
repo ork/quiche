@@ -63,6 +63,7 @@ ApplicationWindow {
                         }
 
                         Keys.onReturnPressed: {
+                            Twitch.get_stream_url('faceittv', null)
                             print("Streamed by " + displayName)
                         }
                     }
