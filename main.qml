@@ -10,20 +10,24 @@ ApplicationWindow {
     title: qsTr("Quiche")
 
     StackView {
-        id:stack
+        id: stack
         initialItem: featuredStreams
 
         Component {
-            id:featuredStreams
+            id: featuredStreams
 
             Rectangle {
                 width: parent.width
                 height: parent.height
 
-                Component.onCompleted: startup();
+                Component.onCompleted: paginate();
 
-                function startup() {
-                    Twitch.get_featured_streams(function(resp) {
+                function paginate() {
+                    if (typeof paginate.pages == 'undefined') {
+                        paginate.pages = 0
+                    }
+
+                    Twitch.get_featured_streams(++paginate.pages, function(resp) {
                         for (var i = 0; i < resp.featured.length; ++i) {
                             var item = {
                                 preview: resp.featured[i].stream.preview,
@@ -58,13 +62,16 @@ ApplicationWindow {
                                 width: parent.width
                                 text: title
                                 elide: "ElideRight"
+                                maximumLineCount: 1
                                 color: streamItem.activeFocus ? "red" : "black"
                             }
                         }
 
                         Keys.onReturnPressed: {
-                            Twitch.get_stream_url('faceittv', null)
-                            print("Streamed by " + displayName)
+                            Twitch.get_stream_uris('faceittv', function(uris) {
+                                print(uris[0]);
+                                stack.push({item:streamPlayer, properties:{uri: uris[0]}});
+                            });
                         }
                     }
                 }
@@ -79,6 +86,12 @@ ApplicationWindow {
                     cellWidth: 340
                     focus: true
                     clip: true
+
+                    onAtYEndChanged: {
+                        if (streams.atYEnd && !streams.atYBeginning) {
+                            parent.paginate();
+                        }
+                    }
                 }
 
                 ListModel {
@@ -86,6 +99,21 @@ ApplicationWindow {
 
                 }
             }
+        }
+
+        Component {
+            id: streamPlayer
+
+            Rectangle {
+                width: parent.width
+                height: parent.height
+
+                color: "red"
+                Label {
+                    text: uri
+                }
+            }
+
         }
     }
 }

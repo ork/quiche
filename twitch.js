@@ -32,14 +32,15 @@ function request_uri(verb, base, endpoint, obj, cb) {
     xhr.send(data);
 }
 
-function get_featured_streams(cb) {
-    request_json("GET", BASE, "streams/featured?hls=true", null, cb);
+function get_featured_streams(offset, cb) {
+    request_json("GET", BASE, "streams/featured?hls=true&offset=" + offset, null, cb);
 }
 
-function get_stream_url(channel, cb) {
+function get_stream_uris(channel, cb) {
     request_json("GET", "http://api.twitch.tv/api", "channels/" + channel + "/access_token", null, function(e) {
         request_uri("GET", "http://usher.twitch.tv", "select/" + channel + ".json?nauthsig=" + encodeURIComponent(e.sig) + "&nauth=" + encodeURIComponent(e.token) + "&allow_source=true", null, function(f) {
-            print(f);
+            var uris = f.match(/^http.*$/gm);
+            cb(uris);
         });
     });
 }
